@@ -43,7 +43,7 @@ class MonteCarloPricing(OptionPricingModel):
         Simulating price movement of underlying prices using Brownian random process.
         Saving random results.
         """
-        np.random.seed(20)
+        np.random.seed(42)
         self.simulation_results = None
 
         # Initializing price movements for simulation: rows as time index and columns as different random price movements.

@@ -2,11 +2,8 @@ import datetime
 import yfinance as yf
 import matplotlib.pyplot as plt
 import pandas as pd
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning, module='yfinance')
 
 class Ticker:
-    @staticmethod
     @staticmethod
     def get_historical_data(ticker, start_date=None, end_date=None):
         try:
@@ -14,21 +11,15 @@ class Ticker:
                 start_date = datetime.datetime.now() - datetime.timedelta(days=365)
             if end_date is None:
                 end_date = datetime.datetime.now()
-
-            # Use yf.download
-            data = yf.download(ticker, start=start_date, end=end_date, progress=False)
-
+            
+            stock = yf.Ticker(ticker)
+            data = stock.history(start=start_date, end=end_date, auto_adjust = False)
+            
             if data.empty:
                 raise ValueError(f"No data returned for ticker {ticker}")
-
-            # ✅ Flatten MultiIndex columns, e.g. ('Close', 'AAPL') → 'Close'
-            if isinstance(data.columns, pd.MultiIndex):
-                data.columns = data.columns.get_level_values(0)
-
             return data
         except Exception as e:
             raise Exception(f"Error fetching data for ticker {ticker}: {str(e)}")
-
 
     @staticmethod
     def get_columns(data):

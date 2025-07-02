@@ -22,8 +22,14 @@ def get_historical_data(ticker):
 @st.cache_data
 def get_current_price(ticker):
     try:
-        data = yf.Ticker(ticker).history(period="1d")
-        return data['Close'].iloc[-1]
+        stock = yf.Ticker(ticker)
+        data = stock.history(period="1d", auto_adjust=False)
+        if data is None or data.empty or 'Close' not in data.columns:
+            data = stock.history(period="5d", auto_adjust=False)
+        if data is None or data.empty or 'Close' not in data.columns or len(data['Close']) == 0:
+            return None
+        return float(data['Close'].iloc[-1])
+        
     except Exception as e:
         st.error(f"Error fetching current price for {ticker}: {str(e)}")
         return None
